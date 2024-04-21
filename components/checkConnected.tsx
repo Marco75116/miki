@@ -4,15 +4,13 @@ import { useRouter } from "next/navigation";
 import { useAccount } from "wagmi";
 
 const CheckConnected = () => {
-	const { isConnected } = useAccount();
-	const router = useRouter();
-	useEffect(() => {
-		isConnected
-			? router.push("/secured-assets")
-			: router.push("/connectwallet");
-	}, [isConnected]);
+  const { isConnected } = useAccount();
+  const router = useRouter();
+  useEffect(() => {
+    isConnected ? router.push("/swap") : router.push("/connectwallet");
+  }, [isConnected]);
 
-	return <div></div>;
+  return <div></div>;
 };
 
 export default CheckConnected;

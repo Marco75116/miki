@@ -85,3 +85,11 @@ html,body,:root{
   justify-content: center;    
   align-items: center;
 }
+
+body {
+  background-image: url('../lib/assets/logos/mikibg.jpeg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  font-family: 'Inter', sans-serif; /* Assuming Inter is the desired font */
+}

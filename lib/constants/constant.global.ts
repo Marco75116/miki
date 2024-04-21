@@ -1,22 +1,22 @@
 export const menu = [
   {
-    label: "Settings",
-    href: "/settings",
+    label: "dashboard",
+    href: "/",
   },
   {
-    label: "Secured Assets",
-    href: "/secured-assets",
+    label: "swap",
+    href: "/swap",
   },
   {
-    label: "Secured NFTs",
-    href: "/secured-nfts",
+    label: "earn",
+    href: "/earn",
   },
   {
-    label: "Recovery",
-    href: "/recovery",
+    label: "launchpad",
+    href: "/launchpad",
   },
   {
-    label: "Your Wallets",
-    href: "/your-wallets",
+    label: "bridge",
+    href: "https://meson.fi/",
   },
 ];
