@@ -5,9 +5,9 @@ import MenuSection from "./menuSection";
 const Menu = () => {
   return (
     <div className="flex flex-row gap-2">
-      {menu.map((section) => (
-        <MenuSection key={section.href} section={section} />
-      ))}
+      {menu.map((section) => {
+        return <MenuSection key={section.href} section={section} />;
+      })}
     </div>
   );
 };

@@ -1,6 +1,7 @@
 "use client";
 import { usePathname, useRouter } from "next/navigation";
 import React, { useMemo } from "react";
+import EarnSection from "./earnSection";
 type MenuSectionProps = {
   section: { label: string; href: string };
 };
@@ -16,14 +17,18 @@ const MenuSection = ({ section }: MenuSectionProps) => {
   return (
     // biome-ignore lint/a11y/useKeyWithClickEvents: <explanation>
     <div
-      className={`text-lg  cursor-pointer   ${
+      className={`text-lg  cursor-pointer flex items-center  ${
         currentPage ? "font-semibold" : "font-light"
       }`}
       onClick={() => {
         push(section.href);
       }}
     >
-      {section.label}
+      {section.label === "earn" ? (
+        <EarnSection label={section.label} />
+      ) : (
+        section.label
+      )}
     </div>
   );
 };
