@@ -11,7 +11,10 @@ const MenuSection = ({ section }: MenuSectionProps) => {
   const pathname = usePathname();
 
   const currentPage = useMemo(() => {
-    return section.href === pathname;
+    if (section.href === "/") {
+      return pathname === section.href;
+    }
+    return pathname.includes(section.href);
   }, [section, pathname]);
 
   return (
