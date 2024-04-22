@@ -10,12 +10,9 @@ const myFont = localFont({
   src: [
     {
       path: "../lib/fonts/zt-chintzy/ZTChintzy-Light-BF65e6952145108.otf",
-      weight: "300",
-    },
-    {
-      path: "../lib/fonts/zt-chintzy/ZT-Chintzy-Black-BF65e6951ed0d80.otf",
       weight: "400",
     },
+
     {
       path: "../lib/fonts/zt-chintzy/ZTChintzy-Medium-BF65e695214f9dd.otf",
       weight: "500",
