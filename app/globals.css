@@ -91,5 +91,8 @@ body {
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  font-family: 'Inter', sans-serif; /* Assuming Inter is the desired font */
+}
+
+.word-spacing-wide {
+  word-spacing: 3px; 
 }
