@@ -12,7 +12,6 @@ const DashboardLayout = async ({ children }: DashboardLayoutProps) => {
       <div className="h-full relative">
         <main className="overflow-hidden h-full flex flex-col">
           <Header />
-          <Separator className="border" />
 
           <div className="flex-1">{children}</div>
         </main>
