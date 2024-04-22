@@ -19,6 +19,7 @@ const config = {
     },
     extend: {
       colors: {
+        mauve: "#c599e0",
         bcPink: "#D847DE",
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",

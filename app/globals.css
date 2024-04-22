@@ -30,7 +30,8 @@
 
     --border: 0 0% 89.8%;
     --input: 0 0% 89.8%;
-    --ring: 0 0% 3.9%;
+    --ring: 277 53% 74%;
+
  
     --radius: 0.5rem;
   }
@@ -95,4 +96,23 @@ body {
 
 .word-spacing-wide {
   word-spacing: 3px; 
+}
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+input[type="number"]::-ms-clear,
+input[type="number"]::-ms-reveal {
+  display: none;
+}
+
+.negativeMargin {
+  margin: -16px auto;
 }
