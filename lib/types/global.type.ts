@@ -7,3 +7,17 @@ export type TokenBalance = {
   balance: number;
   decimals: number;
 };
+
+export type TokenMarket = {
+  addressToken: string;
+  symbol: string;
+  name: string;
+  totalSupplied: number;
+  supplyAPY: number;
+  supplyBoost: number;
+  totalBorrowed: number;
+  borrowAPY: number;
+  borrowBoost: number;
+  imgSrc: StaticImageData;
+  price: number;
+};
