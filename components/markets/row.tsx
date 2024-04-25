@@ -9,12 +9,14 @@ import {
 } from "@/lib/helpers/global.helper";
 import { Button } from "../ui/button";
 import skaleLogo from "@/lib/assets/tokens/skale.png";
+import { useRouter } from "next/navigation";
 
 type RowTokensProps = {
   token: TokenMarket;
 };
 
 const Row = ({ token }: RowTokensProps) => {
+  const router = useRouter();
   const assetCell = useMemo(() => {
     return (
       <div className="flex gap-2 items-center">
@@ -42,9 +44,10 @@ const Row = ({ token }: RowTokensProps) => {
   }, [token.totalSupplied, token.price]);
 
   const supplyAPYCell = useMemo(() => {
+    const totalApy = token.supplyAPY + token.supplyBoost;
     return (
       <div className="flex flex-col">
-        {toFormattedPercentage(token.supplyAPY, 2)}
+        {toFormattedPercentage(totalApy, 2)}
         {token.supplyBoost ? (
           <div>
             <Button
@@ -78,9 +81,10 @@ const Row = ({ token }: RowTokensProps) => {
   }, [token.totalBorrowed, token.price]);
 
   const borrowAPYCell = useMemo(() => {
+    const totalApy = token.borrowAPY - token.borrowBoost;
     return (
       <div>
-        {toFormattedPercentage(token.borrowAPY, 2)}
+        {toFormattedPercentage(totalApy, 2)}
         {token.borrowBoost ? (
           <div>
             <Button
@@ -100,7 +104,12 @@ const Row = ({ token }: RowTokensProps) => {
   }, [token.borrowAPY, token.borrowBoost]);
 
   return (
-    <TableRow className="cursor-pointer">
+    <TableRow
+      className="cursor-pointer"
+      onClick={() => {
+        router.push(`/earn/lending/${token.addressToken}`);
+      }}
+    >
       <TableCell className="font-medium">{assetCell}</TableCell>
       <TableCell className="font-medium">{totalSuppliedCell}</TableCell>
       <TableCell className="font-medium">{supplyAPYCell}</TableCell>
