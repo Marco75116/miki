@@ -21,3 +21,12 @@ export type TokenMarket = {
   imgSrc: StaticImageData;
   price: number;
 };
+
+export const lendingsActions = [
+  "supply",
+  "withdraw",
+  "borrow",
+  "repay",
+] as const;
+
+export type lendingAction = (typeof lendingsActions)[number];

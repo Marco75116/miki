@@ -107,7 +107,7 @@ const Row = ({ token }: RowTokensProps) => {
     <TableRow
       className="cursor-pointer"
       onClick={() => {
-        router.push(`/earn/lending/${token.addressToken}`);
+        router.push(`/earn/lending/${token.addressToken}?action=supply`);
       }}
     >
       <TableCell className="font-medium">{assetCell}</TableCell>

@@ -1,7 +1,7 @@
 import Markets from "@/components/markets/markets";
 import React from "react";
 
-const LendingPage = () => {
+const page = () => {
   return (
     <div className="h-full center">
       <Markets />
@@ -9,4 +9,4 @@ const LendingPage = () => {
   );
 };
 
-export default LendingPage;
+export default page;

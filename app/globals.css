@@ -116,3 +116,7 @@ input[type="number"]::-ms-reveal {
 .negativeMargin {
   margin: -16px auto;
 }
+
+.capitalize-first::first-letter {
+  text-transform: uppercase;
+}

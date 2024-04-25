@@ -1,3 +1,5 @@
+import { mockTokenData } from "../constants/constant.global";
+
 export const getRandomNumber = (min: number, max: number) => {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 };
@@ -124,4 +126,10 @@ export const getRelativeTime = (timestamp: number) => {
 
 export const toMilli = (num: number) => {
   return num * 1000;
+};
+
+export const getMarketTokenFromSymbol = (symbol: string) => {
+  return mockTokenData.find((token) => {
+    return token.symbol === symbol;
+  });
 };
