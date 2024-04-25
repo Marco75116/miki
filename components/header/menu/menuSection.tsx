@@ -2,12 +2,12 @@
 import { usePathname, useRouter } from "next/navigation";
 import React, { useMemo } from "react";
 import EarnSection from "./earnSection";
+import Link from "next/link";
 type MenuSectionProps = {
   section: { label: string; href: string };
 };
 
 const MenuSection = ({ section }: MenuSectionProps) => {
-  const { push } = useRouter();
   const pathname = usePathname();
 
   const currentPage = useMemo(() => {
@@ -17,22 +17,19 @@ const MenuSection = ({ section }: MenuSectionProps) => {
     return pathname.includes(section.href);
   }, [section, pathname]);
 
+  if (section.label === "earn") {
+    return <EarnSection label={section.label} currentPage={currentPage} />;
+  }
+
   return (
-    // biome-ignore lint/a11y/useKeyWithClickEvents: <explanation>
-    <div
+    <Link
       className={`text-lg  cursor-pointer flex items-center  ${
         currentPage ? "font-semibold" : "font-light"
       }`}
-      onClick={() => {
-        push(section.href);
-      }}
+      href={section.href}
     >
-      {section.label === "earn" ? (
-        <EarnSection label={section.label} />
-      ) : (
-        section.label
-      )}
-    </div>
+      {section.label}
+    </Link>
   );
 };
 

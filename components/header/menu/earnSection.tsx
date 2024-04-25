@@ -11,49 +11,62 @@ import {
   NavigationMenuList,
   NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu";
+import Link from "next/link";
 
 const components: { title: string; href: string; description: string }[] = [
   {
     title: "farms",
-    href: "/earn/farms",
+    href: "/farms",
     description: "provide liquidity for rewards",
   },
   {
     title: "pool",
-    href: "/earn/pool",
+    href: "/pool",
     description: "facilitate exchanges for fees",
   },
   {
     title: "lending",
-    href: "/earn/lending",
+    href: "/lending",
     description: "earn interest by lending your cryptos or borrow for trading",
   },
   {
     title: "staking",
-    href: "/earn/staking",
+    href: "/staking",
     description: "transform your holdings into a profitable asset",
   },
 ];
 type EarnSectionProps = {
   label: string;
+  currentPage: boolean;
 };
-const EarnSection = ({ label }: EarnSectionProps) => {
+const EarnSection = ({ label, currentPage }: EarnSectionProps) => {
   return (
     <NavigationMenu>
       <NavigationMenuList>
         <NavigationMenuItem>
-          <NavigationMenuTrigger>{label}</NavigationMenuTrigger>
+          <NavigationMenuTrigger>
+            <Link
+              href={"/earn"}
+              className={`text-lg  cursor-pointer flex items-center  ${
+                currentPage ? "font-semibold" : "font-light"
+              }`}
+            >
+              {label}
+            </Link>
+          </NavigationMenuTrigger>
           <NavigationMenuContent>
             <ul className="  w-[400px] gap-3 p-4 fixed bg-[#C599E0] rounded-lg">
-              {components.map((component) => (
-                <ListItem
-                  key={component.title}
-                  title={component.title}
-                  href={component.href}
-                >
-                  {component.description}
-                </ListItem>
-              ))}
+              {components.map((component) => {
+                return (
+                  <ListItem
+                    key={component.title}
+                    title={component.title}
+                    href={`/earn/${component.href}`}
+                  >
+                    {component.description}
+                  </ListItem>
+                );
+              })}
             </ul>
           </NavigationMenuContent>
         </NavigationMenuItem>
