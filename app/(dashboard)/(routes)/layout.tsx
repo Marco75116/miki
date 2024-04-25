@@ -1,5 +1,4 @@
 import Header from "@/components/header/header";
-import { Separator } from "@/components/ui/separator";
 import React from "react";
 
 type DashboardLayoutProps = {
