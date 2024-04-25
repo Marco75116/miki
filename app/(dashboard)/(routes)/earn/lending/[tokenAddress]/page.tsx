@@ -173,7 +173,10 @@ const Page = () => {
                   </Select>
                   <div className="flex flex-col items-end">
                     <span className=" text-muted-foreground text-sm">
-                      Supply APY
+                      {actionParam === "supply" || actionParam === "withdraw"
+                        ? "Supply"
+                        : "Borrow"}
+                      APY
                     </span>
                     <div className="font-medium text-lg">
                       {toFormattedPercentage(apy, 2)} APY
