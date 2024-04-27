@@ -124,7 +124,7 @@ const Page = () => {
           <div>markets keys</div>
         </div>
         <div>
-          <div className="flex w-full lg:w-96 space-y-6 visible flex-col">
+          <div className="flex w-full lg:min-w-96 space-y-6 visible flex-col">
             <Card className="py-2">
               <div className="flex flex-1 gap-2 p-2">
                 {lendingsActions.map((action) => {
