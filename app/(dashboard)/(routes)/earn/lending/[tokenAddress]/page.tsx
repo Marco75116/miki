@@ -3,10 +3,16 @@ import React, { useCallback, useMemo, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { mockTokenData } from "@/lib/constants/constant.global";
 import { Button } from "@/components/ui/button";
-import { MoveLeft } from "lucide-react";
+import { BadgeInfo, MoveLeft } from "lucide-react";
 import Image from "next/image";
 import coins from "@/lib/assets/designs/coins.png";
-import { Card, CardContent } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+} from "@/components/ui/card";
+
 import { Separator } from "@/components/ui/separator";
 import { lendingAction, lendingsActions } from "@/lib/types/global.type";
 import {
@@ -22,9 +28,16 @@ import {
 } from "@/lib/helpers/global.helper";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
+import { Switch } from "@/components/ui/switch";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 const Page = () => {
   const [amount, setAmount] = useState<string>("0");
+  const [col, setCol] = useState<boolean>(false);
 
   const router = useRouter();
   const pathname = usePathname();
@@ -93,7 +106,7 @@ const Page = () => {
   }
 
   return (
-    <div className="h-full  max-w-[1512px] mx-auto px-2 lg:px-4 py-2 lg:py-20 overflow-x-hidden">
+    <div className="h-full  max-w-[1512px] mx-auto px-2 lg:px-4 py-2 lg:py-14 overflow-x-hidden">
       <div className="flex flex-1 flex-row lg:space-x-32 pb-32">
         <div className="space-y-8 lg:space-y-14 w-full">
           <div className="flex items-center gap-2">
@@ -111,7 +124,7 @@ const Page = () => {
           <div>markets keys</div>
         </div>
         <div>
-          <div className="flex w-full lg:w-96 space-y-14 visible">
+          <div className="flex w-full lg:w-96 space-y-6 visible flex-col">
             <Card className="py-2">
               <div className="flex flex-1 gap-2 p-2">
                 {lendingsActions.map((action) => {
@@ -215,6 +228,75 @@ const Page = () => {
                 >
                   <span className="capitalize-first">{actionParam}</span>
                 </Button>
+              </CardContent>
+            </Card>
+
+            <div className="space-y-4">
+              <div
+                className={`text-lg flex items-center gap-2 ${
+                  col ? "text-black" : "text-muted-foreground "
+                }`}
+              >
+                Enabled as Collateral{" "}
+                <Switch
+                  onCheckedChange={() => {
+                    setCol((prev) => !prev);
+                  }}
+                />
+              </div>
+              <Card>
+                <CardHeader className={"p-4"}>
+                  <CardDescription>You have supplied</CardDescription>
+                </CardHeader>
+                <CardContent className="pb-4">
+                  <div className="space-y-1">
+                    <div className="text-2xl">$297.63</div>
+                    <div className="text-sm text-muted-foreground">
+                      297.75 {token.symbol}
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            <Card>
+              <CardHeader className={"p-4"}>
+                <CardDescription>Rewards</CardDescription>
+              </CardHeader>
+              <CardContent className="pb-4">
+                <div className="flex justify-between">
+                  <div className="text-2xl">
+                    $0.38
+                    <Tooltip>
+                      <TooltipTrigger className="text-muted-foreground">
+                        <BadgeInfo height={16} />
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>
+                          <div className="space-y-2">
+                            <div className="text-sm font-medium">Rewards</div>
+                            <div>
+                              {" "}
+                              <div>$0.05</div>
+                              <div className="text-muted-foreground text-xs">
+                                39.72 {token.symbol}
+                              </div>
+                            </div>
+                            <div>
+                              <div>$0.01</div>
+                              <div className="text-muted-foreground text-xs">
+                                3.72 Skale
+                              </div>
+                            </div>
+                          </div>
+                        </p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </div>
+                  <Button variant={"secondary"} size={"sm"}>
+                    Claim
+                  </Button>
+                </div>
               </CardContent>
             </Card>
           </div>
