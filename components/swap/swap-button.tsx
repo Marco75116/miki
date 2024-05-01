@@ -1,17 +1,21 @@
 "use client";
 
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo } from "react";
 import { abiRouter02 } from "@/lib/constants/abis/abiRouter02";
 import { abiERC20Testnet } from "@/lib/constants/abis/abiERC20Testnet";
-import { useAccount, useWriteContract } from "wagmi";
+import {
+	useAccount,
+	useWaitForTransactionReceipt,
+	useWriteContract,
+} from "wagmi";
 import { Button } from "../ui/button";
-import { useSecureTokenSelection } from "@/lib/stores/secureTokenSelection";
 import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 import { useApproveNeeded } from "@/lib/hooks/useApproveNeeded";
 import { stringToBigIntWithDecimals } from "@/lib/helpers/global.helper";
 import { TokenBalance } from "@/lib/types/global.type";
 import { routerAddress02 } from "@/lib/constants/constant.global";
+import { toast } from "sonner";
 
 type SwapButtonProps = {
 	amountFrom: string;
@@ -28,7 +32,36 @@ const SwapButton = ({
 	tokenSelectedTo,
 	pairExist,
 }: SwapButtonProps) => {
-	const { data: hash, isPending, writeContract, error } = useWriteContract();
+	const {
+		data: hash,
+		isPending,
+		isSuccess,
+		writeContract,
+		error,
+	} = useWriteContract();
+
+	const { isSuccess: isConfirmed } = useWaitForTransactionReceipt({
+		hash,
+	});
+
+	useEffect(() => {
+		if (isConfirmed) {
+			toast("Transaction successfully submitted!", {
+				className: "success",
+				description: "",
+				action: {
+					label: "View",
+					onClick: () => {
+						window.open(
+							`https://juicy-low-small-testnet.explorer.testnet.skalenodes.com/tx/${hash}`,
+							"_blank",
+						);
+					},
+				},
+			});
+		}
+	}, [isConfirmed, hash]);
+
 	const { address } = useAccount();
 
 	const router = useRouter();

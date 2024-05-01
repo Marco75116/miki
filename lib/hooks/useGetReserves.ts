@@ -1,6 +1,7 @@
 import { useReadContract } from "wagmi";
 import { abiPairAddress } from "../constants/abis/abiPairAddress";
 import { zeroAddress } from "viem";
+import { timeByBlock } from "../constants/constant.global";
 
 type Reserves = [bigint, bigint, bigint];
 
@@ -8,6 +9,7 @@ export const useGetReserves = (pairAddress: string) => {
 	const { data: reserves } = useReadContract({
 		query: {
 			enabled: pairAddress !== zeroAddress,
+			refetchInterval: timeByBlock / 2,
 		},
 		abi: abiPairAddress,
 		address: pairAddress as `0x${string}`,

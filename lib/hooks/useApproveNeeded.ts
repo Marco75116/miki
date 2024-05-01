@@ -30,7 +30,7 @@ export const useApproveNeeded = (
 				},
 			],
 			query: {
-				refetchInterval: timeByBlock,
+				refetchInterval: timeByBlock / 2,
 				enabled: tokenAddress !== undefined,
 			},
 		});

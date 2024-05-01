@@ -17,7 +17,7 @@ export const useSelectedTokenBalance = (tokenAddress: string | undefined) => {
 			allowFailure: false,
 			query: {
 				enabled: tokenAddress !== undefined || address !== undefined,
-				refetchInterval: timeByBlock,
+				refetchInterval: timeByBlock / 2,
 			},
 			contracts: [
 				{
