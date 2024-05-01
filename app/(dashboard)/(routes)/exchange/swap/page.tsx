@@ -13,11 +13,20 @@ import Image from "next/image";
 import { mockWalletBalance } from "@/lib/constants/constant.global";
 import { useSecureTokenSelection } from "@/lib/stores/secureTokenSelection";
 import { TokenBalance } from "@/lib/types/global.type";
-import { getRandomNumber } from "@/lib/helpers/global.helper";
+import {
+	displayDecimalNumber,
+	formatNumber,
+	getAmountIn,
+	getAmountOut,
+	getRandomNumber,
+} from "@/lib/helpers/global.helper";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { MoveDown, Settings } from "lucide-react";
+import { MoveVertical, Settings } from "lucide-react";
 import { useSelectedTokenBalance } from "@/lib/hooks/useSelectedTokenBalance";
+import { usePairExists } from "@/lib/hooks/usePairExists";
+import { useGetReserves } from "@/lib/hooks/useGetReserves";
+import SwapButton from "@/components/swap/swap-button";
 
 const SwapPage = () => {
 	const {
@@ -49,6 +58,22 @@ const SwapPage = () => {
 		tokenSelectedTo?.addressToken,
 	);
 
+	const isOrdered = useMemo(() => {
+		if (tokenSelectedFrom && tokenSelectedTo) {
+			return (
+				tokenSelectedFrom.addressToken.toLowerCase() <
+				tokenSelectedTo.addressToken.toLowerCase()
+			);
+		}
+	}, [tokenSelectedFrom, tokenSelectedTo]);
+
+	const { pairAddress, pairExist } = usePairExists(
+		tokenSelectedFrom?.addressToken,
+		tokenSelectedTo?.addressToken,
+	);
+
+	const { reserve0, reserve1 } = useGetReserves(pairAddress as string);
+
 	return (
 		<div className="h-full center">
 			<div className="">
@@ -70,12 +95,27 @@ const SwapPage = () => {
 								value={amountFrom}
 								onChange={(e) => {
 									setAmountFrom(e.target.value);
+
+									if (pairExist) {
+										const amountOut = getAmountOut(
+											e.target.value,
+											tokenSelectedFrom.decimals,
+											tokenSelectedTo.decimals,
+											reserve0,
+											reserve1,
+											isOrdered,
+										);
+										setAmountTo(amountOut);
+									}
 								}}
 							/>
 							<Select
 								value={tokensSelectionFrom}
 								onValueChange={(value) => {
 									setTokensSelectionFrom(value);
+									if (value === tokensSelectionTo) {
+										setTokensSelectionTo("");
+									}
 								}}
 							>
 								<SelectTrigger className="w-[250px]">
@@ -99,14 +139,26 @@ const SwapPage = () => {
 						</div>
 						<div className="flex justify-between text-xs text-muted-foreground">
 							<div>${Number(amountFrom) * getRandomNumber(2, 10)}</div>
-							<div>{tokenSelectedFrom && `balance : ${balanceFrom}`} </div>
+							<div>
+								{tokenSelectedFrom &&
+									`balance : ${formatNumber(Number(balanceFrom), 3)}`}{" "}
+							</div>
 						</div>
 					</CardContent>
 				</Card>
 
 				<div className="center negativeMargin ">
-					<Button variant={"outline"} className=" bg-white border px-2">
-						<MoveDown className="text-black" />
+					<Button
+						variant={"outline"}
+						className=" bg-white border px-2"
+						onClick={() => {
+							const a = tokensSelectionTo;
+							const b = tokensSelectionFrom;
+							setTokensSelectionFrom(a);
+							setTokensSelectionTo(b);
+						}}
+					>
+						<MoveVertical className="text-black" />
 					</Button>
 				</div>
 
@@ -120,12 +172,27 @@ const SwapPage = () => {
 								value={amountTo}
 								onChange={(e) => {
 									setAmountTo(e.target.value);
+
+									if (pairExist) {
+										const amountIn = getAmountIn(
+											e.target.value,
+											tokenSelectedFrom.decimals,
+											tokenSelectedTo.decimals,
+											reserve0,
+											reserve1,
+											isOrdered,
+										);
+										setAmountFrom(amountIn);
+									}
 								}}
 							/>
 							<Select
 								value={tokensSelectionTo}
 								onValueChange={(value) => {
 									setTokensSelectionTo(value);
+									if (value === tokensSelectionFrom) {
+										setTokensSelectionFrom("");
+									}
 								}}
 							>
 								<SelectTrigger className="w-[250px]">
@@ -149,19 +216,22 @@ const SwapPage = () => {
 						</div>
 						<div className="flex justify-between text-xs text-muted-foreground">
 							<div>${Number(amountTo) * getRandomNumber(2, 8)}</div>
-							<div>{tokenSelectedTo && `balance : ${balanceTo}`} </div>
+							<div>
+								{tokenSelectedTo &&
+									`balance : ${formatNumber(Number(balanceTo), 3)}`}{" "}
+							</div>
 						</div>
 					</CardContent>
 				</Card>
 
 				<div className="mt-2">
-					<Button
-						className={cn(
-							"bg-mauve rounded-2xl px-6 w-full h-16 hover:bg-mauve/80",
-						)}
-					>
-						Swap
-					</Button>
+					<SwapButton
+						amountFrom={amountFrom}
+						amountTo={amountTo}
+						tokenSelectedFrom={tokenSelectedFrom}
+						tokenSelectedTo={tokenSelectedTo}
+						pairExist={pairExist}
+					/>
 				</div>
 			</div>
 		</div>
