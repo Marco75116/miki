@@ -11,7 +11,7 @@ export const menu = [
 	},
 	{
 		label: "swap",
-		href: "/swap",
+		href: "exchange/swap",
 	},
 	{
 		label: "earn",
