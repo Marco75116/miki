@@ -19,12 +19,16 @@ const page = () => {
 		<div className="h-full flex items-center flex-col">
 			<div className="space-y-4 w-[40rem] mt-20">
 				<div className="flex gap-4">
-					<Link href={"swap"}>
+					<Link
+						href={"add/0x8f8828d226Befb46A13F4924fDf87FC65bAb343a/undefined"}
+					>
 						<Button className={cn("bg-mauve hover:bg-mauve/80")}>
 							Create Pair
 						</Button>
 					</Link>
-					<Link href={"/swap"}>
+					<Link
+						href={"add/0x8f8828d226Befb46A13F4924fDf87FC65bAb343a/undefined"}
+					>
 						<Button className={cn("bg-mauve hover:bg-mauve/80")}>
 							Add Lidquity
 						</Button>
@@ -65,8 +69,8 @@ const page = () => {
 												</div>
 											</div>
 											<div className="flex flex-row justify-between">
-												<div>Your total pool tokens:</div>
-												<div>0.000003378</div>
+												<div>Your pool share:</div>
+												<div>2.1%</div>
 											</div>
 										</div>
 										<div className="center gap-4">

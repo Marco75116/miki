@@ -11,7 +11,7 @@ export const menu = [
 	},
 	{
 		label: "swap",
-		href: "exchange/swap",
+		href: "/exchange/swap",
 	},
 	{
 		label: "earn",
@@ -109,3 +109,5 @@ export const mockTokenData: TokenMarket[] = [
 ];
 
 export const timeByBlock = 10 * 1000;
+export const routerAddress02 = "0x44109e1f1f1b8d121F5B9Bc92759BC088ebab373";
+export const factoryAddress = "0xC1Ae295b586C164455587593c2D1302Fb87935D7";
