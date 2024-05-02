@@ -134,6 +134,12 @@ export const getMarketTokenFromSymbol = (symbol: string) => {
 	});
 };
 
+export const getTokenFromAddress = (address: string) => {
+	return mockTokenData.find((token) => {
+		return token.addressToken === address;
+	});
+};
+
 export const getAmountOut = (
 	value: string,
 	decimalsFrom: number,

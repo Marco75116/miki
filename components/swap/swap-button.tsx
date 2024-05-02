@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useMemo } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { abiRouter02 } from "@/lib/constants/abis/abiRouter02";
 import { abiERC20Testnet } from "@/lib/constants/abis/abiERC20Testnet";
 import {
@@ -12,8 +12,11 @@ import { Button } from "../ui/button";
 import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 import { useApproveNeeded } from "@/lib/hooks/useApproveNeeded";
-import { stringToBigIntWithDecimals } from "@/lib/helpers/global.helper";
-import { TokenBalance } from "@/lib/types/global.type";
+import {
+	getTokenFromAddress,
+	stringToBigIntWithDecimals,
+} from "@/lib/helpers/global.helper";
+import { TokenBalance, TransactionAction } from "@/lib/types/global.type";
 import { routerAddress02 } from "@/lib/constants/constant.global";
 import { toast } from "sonner";
 
@@ -32,23 +35,59 @@ const SwapButton = ({
 	tokenSelectedTo,
 	pairExist,
 }: SwapButtonProps) => {
+	const [lastTxSubmitted, SetLastTxSubmitted] = useState<TransactionAction>({
+		action: "approve",
+		symbolFrom: "",
+	});
 	const {
 		data: hash,
 		isPending,
 		isSuccess,
 		writeContract,
 		error,
-	} = useWriteContract();
+	} = useWriteContract({
+		mutation: {
+			onSuccess(data, variables, context) {
+				console.log(variables);
+				if (variables.args?.length === 2) {
+					const token = getTokenFromAddress(variables.address);
+					SetLastTxSubmitted({
+						action: "approve",
+						symbolFrom: token?.symbol || "",
+					});
+				} else {
+					if (!variables.args) return;
+					const [addressFrom, addressTo] = (variables.args[2] as [
+						string,
+						string,
+					]) || ["", ""];
+					const tokenFrom = getTokenFromAddress(addressFrom);
+					const tokenTo = getTokenFromAddress(addressTo);
 
-	const { isSuccess: isConfirmed } = useWaitForTransactionReceipt({
-		hash,
+					SetLastTxSubmitted({
+						action: "swap",
+						symbolFrom: tokenFrom?.symbol || "",
+						symbolTo: tokenTo?.symbol || "",
+					});
+				}
+			},
+		},
 	});
+
+	const { isSuccess: isConfirmed, isPending: waitingForConfimation } =
+		useWaitForTransactionReceipt({
+			hash,
+		});
 
 	useEffect(() => {
 		if (isConfirmed) {
+			const desc =
+				lastTxSubmitted.action === "approve"
+					? `Approved ${lastTxSubmitted.symbolFrom} `
+					: `Swap ${lastTxSubmitted.symbolFrom} for ${lastTxSubmitted.symbolTo}.`;
 			toast("Transaction successfully submitted!", {
 				className: "success",
-				description: "",
+				description: desc,
 				action: {
 					label: "View",
 					onClick: () => {
@@ -60,7 +99,7 @@ const SwapButton = ({
 				},
 			});
 		}
-	}, [isConfirmed, hash]);
+	}, [isConfirmed, hash, lastTxSubmitted]);
 
 	const { address } = useAccount();
 

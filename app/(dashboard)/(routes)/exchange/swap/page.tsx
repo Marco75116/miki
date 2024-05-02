@@ -14,7 +14,6 @@ import { mockWalletBalance } from "@/lib/constants/constant.global";
 import { useSecureTokenSelection } from "@/lib/stores/secureTokenSelection";
 import { TokenBalance } from "@/lib/types/global.type";
 import {
-	displayDecimalNumber,
 	formatNumber,
 	getAmountIn,
 	getAmountOut,

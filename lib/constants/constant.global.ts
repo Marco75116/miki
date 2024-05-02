@@ -66,6 +66,7 @@ export const mockTokenData: TokenMarket[] = [
 		borrowBoost: 0.0941,
 		imgSrc: sklLogo,
 		price: 0.09287,
+		decimals: 18,
 	},
 	{
 		addressToken: "0x8f8828d226Befb46A13F4924fDf87FC65bAb343a",
@@ -79,6 +80,7 @@ export const mockTokenData: TokenMarket[] = [
 		borrowBoost: 0.0212,
 		imgSrc: ethLogo,
 		price: 1800.5,
+		decimals: 18,
 	},
 	{
 		addressToken: "0x6aC1C63824991EE50DD41C17F2bb0d111D9fcec1",
@@ -92,6 +94,7 @@ export const mockTokenData: TokenMarket[] = [
 		borrowBoost: 0.0,
 		imgSrc: daiLogo,
 		price: 1.0,
+		decimals: 18,
 	},
 	{
 		addressToken: "0xF8357722637a0bd81b958FEA639BCf7EC7aeB365",
@@ -105,6 +108,7 @@ export const mockTokenData: TokenMarket[] = [
 		borrowBoost: 0,
 		imgSrc: usdtLogo,
 		price: 1.0,
+		decimals: 6,
 	},
 ];
 

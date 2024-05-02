@@ -20,6 +20,7 @@ export type TokenMarket = {
 	borrowBoost: number;
 	imgSrc: StaticImageData;
 	price: number;
+	decimals: number;
 };
 
 export const lendingsActions = [
@@ -30,3 +31,14 @@ export const lendingsActions = [
 ] as const;
 
 export type lendingAction = (typeof lendingsActions)[number];
+
+export type TransactionAction =
+	| {
+			action: "approve";
+			symbolFrom: string;
+	  }
+	| {
+			action: "swap";
+			symbolFrom: string;
+			symbolTo: string;
+	  };
