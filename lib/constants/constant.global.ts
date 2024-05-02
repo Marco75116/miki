@@ -115,3 +115,5 @@ export const mockTokenData: TokenMarket[] = [
 export const timeByBlock = 10 * 1000;
 export const routerAddress02 = "0x44109e1f1f1b8d121F5B9Bc92759BC088ebab373";
 export const factoryAddress = "0xC1Ae295b586C164455587593c2D1302Fb87935D7";
+export const pairDaiEth = "0x7537cfC26cbfB47E708ccE3B8e5517e19b017A7c";
+export const pairUsdtEth = "0xC5E3D784FBb3d3a6806FfbE60068371259E82245";
