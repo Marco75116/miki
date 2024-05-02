@@ -73,6 +73,19 @@ const SwapPage = () => {
 
 	const { reserve0, reserve1 } = useGetReserves(pairAddress as string);
 
+	const priceToken = useMemo(() => {
+		if (tokenSelectedFrom && tokenSelectedTo && reserve0 && reserve1) {
+			return getAmountOut(
+				"1",
+				tokenSelectedFrom.decimals,
+				tokenSelectedTo.decimals,
+				reserve0,
+				reserve1,
+				isOrdered,
+			);
+		}
+	}, [isOrdered, tokenSelectedFrom, tokenSelectedTo, reserve0, reserve1]);
+
 	return (
 		<div className="h-full center">
 			<div className="">
@@ -231,6 +244,11 @@ const SwapPage = () => {
 						tokenSelectedTo={tokenSelectedTo}
 						pairExist={pairExist}
 					/>
+				</div>
+				<div className="text-muted-foreground text-sm mt-2">
+					{tokenSelectedFrom &&
+						tokenSelectedTo &&
+						`1 ${tokenSelectedFrom?.symbol} = ${priceToken} ${tokenSelectedTo?.symbol} `}
 				</div>
 			</div>
 		</div>
