@@ -18,12 +18,12 @@ const components: { title: string; href: string; description: string }[] = [
 	{
 		title: "swap",
 		href: "/swap",
-		description: "provide liquidity for rewards",
+		description: "sell a token against another one",
 	},
 	{
 		title: "liquidity",
 		href: "/liquidity",
-		description: "facilitate exchanges for fees",
+		description: "provide liquidity and earn fees",
 	},
 ];
 type TradeSectionProps = {
