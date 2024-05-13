@@ -1,36 +1,43 @@
 "use client";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import React, { useMemo } from "react";
 import EarnSection from "./earnSection";
 import Link from "next/link";
+import TradeSection from "./tradeSection";
 type MenuSectionProps = {
-  section: { label: string; href: string };
+	section: { label: string; href: string };
 };
 
 const MenuSection = ({ section }: MenuSectionProps) => {
-  const pathname = usePathname();
+	const pathname = usePathname();
 
-  const currentPage = useMemo(() => {
-    if (section.href === "/") {
-      return pathname === section.href;
-    }
-    return pathname.includes(section.href);
-  }, [section, pathname]);
+	const currentPage = useMemo(() => {
+		if (section.href === "/" || section.href === "https://meson.fi/") {
+			return pathname === section.href;
+		}
 
-  if (section.label === "earn") {
-    return <EarnSection label={section.label} currentPage={currentPage} />;
-  }
+		return pathname.includes(section.href.split("/")[1]);
+	}, [section, pathname]);
 
-  return (
-    <Link
-      className={`text-lg  cursor-pointer flex items-center  ${
-        currentPage ? "font-semibold" : "font-light"
-      }`}
-      href={section.href}
-    >
-      {section.label}
-    </Link>
-  );
+	if (section.label === "trade") {
+		return <TradeSection label={section.label} currentPage={currentPage} />;
+	}
+
+	if (section.label === "earn") {
+		return <EarnSection label={section.label} currentPage={currentPage} />;
+	}
+
+	return (
+		<Link
+			className={`text-lg  cursor-pointer flex items-center  ${
+				currentPage ? "font-semibold" : "font-light"
+			}`}
+			href={section.href}
+			target={`${section.href === "https://meson.fi/" ? "_blank" : "_self"}`}
+		>
+			{section.label}
+		</Link>
+	);
 };
 
 export default MenuSection;

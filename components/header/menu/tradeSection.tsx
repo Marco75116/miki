@@ -16,38 +16,28 @@ import RadialGradient from "@/components/magicui/radial-gradient";
 
 const components: { title: string; href: string; description: string }[] = [
 	{
-		title: "farms",
-		href: "/farms",
+		title: "swap",
+		href: "/swap",
 		description: "provide liquidity for rewards",
 	},
 	{
-		title: "pool",
-		href: "/pool",
+		title: "liquidity",
+		href: "/liquidity",
 		description: "facilitate exchanges for fees",
 	},
-	{
-		title: "lending",
-		href: "/lending",
-		description: "earn interest by lending your cryptos or borrow for trading",
-	},
-	{
-		title: "staking",
-		href: "/staking",
-		description: "transform your holdings into a profitable asset",
-	},
 ];
-type EarnSectionProps = {
+type TradeSectionProps = {
 	label: string;
 	currentPage: boolean;
 };
-const EarnSection = ({ label, currentPage }: EarnSectionProps) => {
+const TradeSection = ({ label, currentPage }: TradeSectionProps) => {
 	return (
 		<NavigationMenu>
 			<NavigationMenuList>
 				<NavigationMenuItem>
 					<NavigationMenuTrigger>
 						<Link
-							href={"/earn"}
+							href={"/trade/swap"}
 							className={`text-lg  cursor-pointer flex items-center  ${
 								currentPage ? "font-semibold" : "font-light"
 							}`}
@@ -55,7 +45,6 @@ const EarnSection = ({ label, currentPage }: EarnSectionProps) => {
 							{label}
 						</Link>
 					</NavigationMenuTrigger>
-
 					<NavigationMenuContent>
 						<ul className="  w-[400px] gap-3 p-4 fixed  rounded-lg">
 							{components.map((component) => {
@@ -63,7 +52,7 @@ const EarnSection = ({ label, currentPage }: EarnSectionProps) => {
 									<ListItem
 										key={component.title}
 										title={component.title}
-										href={`/earn/${component.href}`}
+										href={`/trade/${component.href}`}
 									>
 										{component.description}
 									</ListItem>
@@ -104,4 +93,4 @@ const ListItem = React.forwardRef<
 });
 ListItem.displayName = "ListItem";
 
-export default EarnSection;
+export default TradeSection;

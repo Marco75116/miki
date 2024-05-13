@@ -20,7 +20,7 @@ export default function ConnectModal() {
 	const { connect, connectors } = useConnect({
 		mutation: {
 			onSuccess() {
-				router.push("/exchange/swap");
+				router.push("/trade/swap");
 			},
 		},
 	});
