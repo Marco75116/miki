@@ -12,8 +12,20 @@ const TRANSFERS_QUERY = gql`
     }
   }
 `;
+
+interface Transfer {
+	id: string;
+	from: string;
+	to: string;
+	value: string;
+}
+
+interface TransfersData {
+	transfers: Transfer[];
+}
+
 const Transfers = () => {
-	const { loading, error, data } = useQuery(TRANSFERS_QUERY);
+	const { loading, error, data } = useQuery<TransfersData>(TRANSFERS_QUERY);
 
 	if (loading) return <p>Loading...</p>;
 	if (error) return <p>Error :{error.message}</p>;
@@ -22,7 +34,7 @@ const Transfers = () => {
 		<div>
 			<h1>Transfers</h1>
 			<ul>
-				{data.transfers.map(({ id, from, to, value }) => (
+				{data?.transfers.map(({ id, from, to, value }) => (
 					<li key={id}>{`From: ${from}, To: ${to}, Value: ${value}`}</li>
 				))}
 			</ul>
