@@ -1,5 +1,5 @@
 "use client";
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import {
 	Select,
@@ -85,6 +85,27 @@ const SwapPage = () => {
 			);
 		}
 	}, [isOrdered, tokenSelectedFrom, tokenSelectedTo, reserve0, reserve1]);
+
+	useEffect(() => {
+		if (tokenSelectedFrom && tokenSelectedTo && reserve0 && reserve1) {
+			const amountOut = getAmountOut(
+				amountFrom,
+				tokenSelectedFrom.decimals,
+				tokenSelectedTo.decimals,
+				reserve0,
+				reserve1,
+				isOrdered,
+			);
+			setAmountTo(amountOut);
+		}
+	}, [
+		isOrdered,
+		tokenSelectedFrom,
+		tokenSelectedTo,
+		reserve0,
+		reserve1,
+		amountFrom,
+	]);
 
 	return (
 		<div className="h-full center">
