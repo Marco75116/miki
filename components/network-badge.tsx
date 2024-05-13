@@ -6,7 +6,10 @@ import { Badge } from "./ui/badge";
 const Networkbadge = () => {
 	const { chainId } = useAccount();
 	const isRightNetwork = useMemo(() => {
-		return chainId === 1_444_673_419;
+		if (chainId) {
+			return chainId === 1_444_673_419;
+		}
+		return true;
 	}, [chainId]);
 	const { switchChain } = useSwitchChain();
 
