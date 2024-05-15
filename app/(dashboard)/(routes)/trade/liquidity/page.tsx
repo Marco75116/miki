@@ -3,6 +3,7 @@ import Link from "next/link";
 import React from "react";
 import { cn } from "@/lib/utils";
 import CardPairV2 from "@/components/card-pair";
+import { pairDaiEth, pairUsdtEth } from "@/lib/constants/constant.global";
 
 const page = () => {
 	return (
@@ -26,7 +27,8 @@ const page = () => {
 				</div>
 
 				<div>My Liquidity Positions : </div>
-				<CardPairV2 />
+				<CardPairV2 lpAddress={pairDaiEth} />
+				<CardPairV2 lpAddress={pairUsdtEth} />
 			</div>
 		</div>
 	);

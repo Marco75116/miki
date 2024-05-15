@@ -9,7 +9,7 @@ import { useRouter } from "next/navigation";
 const AddressDiplayed = () => {
 	const router = useRouter();
 
-	const { address } = useAccount();
+	const { isConnected, address } = useAccount();
 	const { chains } = useSwitchChain();
 	const chainId = useChainId();
 
@@ -25,9 +25,9 @@ const AddressDiplayed = () => {
 		return `${address?.slice(0, 5)}...${address?.slice(-4)}`;
 	}, [address]);
 
-	if (address) {
+	if (isConnected) {
 		return (
-			<div className="flex flex-row items-end gap-1 text-sm ">
+			<div className="flex flex-row items-end gap-1 text-sm w-[172px]">
 				<span className="font-semibold text-black ">
 					<Wallet />
 				</span>

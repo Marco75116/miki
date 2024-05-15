@@ -8,9 +8,6 @@ import {
 	AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Separator } from "@/components/ui/separator";
-import Image from "next/image";
-import ethLogo from "@/lib/assets/tokens/ethereum.png";
-import daiLogo from "@/lib/assets/tokens/dai.png";
 import { Button } from "./ui/button";
 import { cn } from "@/lib/utils";
 import { useUserPoolInfos } from "@/lib/hooks/useUserPoolInfos";
@@ -19,17 +16,34 @@ import {
 	toFormattedPercentage,
 } from "@/lib/helpers/global.helper";
 import Link from "next/link";
+import { useGetERC20Infos } from "@/lib/hooks/useGetERC20Infos";
+import ImageTokenList from "./ImageTokenList";
 
-const CardPairV2 = () => {
-	const { balancePairV2, poolShare, balanceToken0, balanceToken1 } =
-		useUserPoolInfos();
+type CardPairV2Props = {
+	lpAddress: string;
+};
+
+const CardPairV2 = ({ lpAddress }: CardPairV2Props) => {
+	const {
+		balancePairV2,
+		poolShare,
+		balanceToken0,
+		balanceToken1,
+		token0Address,
+		token1Address,
+	} = useUserPoolInfos(lpAddress);
+
+	const { symbol: token0Symbol } = useGetERC20Infos(token0Address);
+	const { symbol: token1Symbol } = useGetERC20Infos(token1Address);
 
 	return (
 		<Card>
 			<CardContent className="pb-0">
 				<Accordion type="single" collapsible>
 					<AccordionItem value="item-1" className=" border-b-0">
-						<AccordionTrigger>DAI/ETH </AccordionTrigger>
+						<AccordionTrigger>
+							{token0Symbol}/{token1Symbol}
+						</AccordionTrigger>
 						<AccordionContent>
 							<Separator />
 
@@ -44,18 +58,18 @@ const CardPairV2 = () => {
 										<div>0</div>
 									</div>
 									<div className="flex flex-row justify-between">
-										<div>DAI:</div>
+										<div>{token0Symbol}:</div>
 										<div className="flex gap-1">
 											{formatNumber(balanceToken0, 3)}
-											<Image src={daiLogo} alt="token img" height={20} />
+											<ImageTokenList symbol={token0Symbol} />
 										</div>
 									</div>
 									<div className="flex flex-row justify-between">
-										<div>ETH:</div>
+										<div>{token1Symbol}:</div>
 										<div className="flex gap-1">
 											{formatNumber(balanceToken1, 3)}
 
-											<Image src={ethLogo} alt="token img" height={20} />
+											<ImageTokenList symbol={token1Symbol} />
 										</div>
 									</div>
 									<div className="flex flex-row justify-between">
@@ -64,18 +78,16 @@ const CardPairV2 = () => {
 									</div>
 								</div>
 								<div className="center gap-4">
-									<Link
-										href={
-											"add/0x6aC1C63824991EE50DD41C17F2bb0d111D9fcec1/0x8f8828d226Befb46A13F4924fDf87FC65bAb343a"
-										}
-									>
+									<Link href={`add/${token0Address}/${token1Address}`}>
 										<Button className={cn("bg-mauve hover:bg-mauve/80")}>
 											Add Lidquity
 										</Button>
 									</Link>
-									<Button className={cn("bg-mauve hover:bg-mauve/80")}>
-										Remove Lidquity
-									</Button>
+									<Link href={`remove/${lpAddress}`}>
+										<Button className={cn("bg-mauve hover:bg-mauve/80")}>
+											Remove Lidquity
+										</Button>
+									</Link>
 								</div>
 							</div>
 						</AccordionContent>
