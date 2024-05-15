@@ -7,7 +7,7 @@ import {
 	CardHeader,
 	CardTitle,
 } from "@/components/ui/card";
-import { MoveLeft, Plus, Settings } from "lucide-react";
+import { Loader2, MoveLeft, Plus, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import {
@@ -23,24 +23,61 @@ import {
 	mockWalletBalance,
 	routerAddress02,
 } from "@/lib/constants/constant.global";
-import { TokenBalance } from "@/lib/types/global.type";
+import { TokenBalance, TransactionAction } from "@/lib/types/global.type";
 import {
 	displayDecimalNumber,
 	getMarketTokenFromSymbol,
 	getRandomNumber,
+	getTokenFromAddress,
 	stringToBigIntWithDecimals,
 } from "@/lib/helpers/global.helper";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
-import { useAccount, useWriteContract } from "wagmi";
+import {
+	useAccount,
+	useWaitForTransactionReceipt,
+	useWriteContract,
+} from "wagmi";
 import { abiRouter02 } from "@/lib/constants/abis/abiRouter02";
 import { abiERC20Testnet } from "@/lib/constants/abis/abiERC20Testnet";
 import { useApproveNeeded } from "@/lib/hooks/useApproveNeeded";
 import { usePairExists } from "@/lib/hooks/usePairExists";
 import { useGetReserves } from "@/lib/hooks/useGetReserves";
+import { useTimeDelayToast } from "@/lib/hooks/useTimeDelayToast";
 
 const AddPage = () => {
-	const { data: hash, isPending, writeContract, error } = useWriteContract();
+	const {
+		data: hash,
+		isPending,
+		writeContract,
+		error,
+	} = useWriteContract({
+		mutation: {
+			onSuccess(data, variables, context) {
+				if (variables.args?.length === 2) {
+					const token = getTokenFromAddress(variables.address);
+					SetLastTxSubmitted({
+						action: "approve",
+						symbolFrom: token?.symbol || "",
+					});
+				} else {
+					if (!variables.args) return;
+					const [addressToken0, addressToken1] = ([
+						variables.args[0],
+						variables.args[1],
+					] as [string, string]) || ["", ""];
+					const token0 = getTokenFromAddress(addressToken0);
+					const token1 = getTokenFromAddress(addressToken1);
+
+					SetLastTxSubmitted({
+						action: "add",
+						symbol0: token0?.symbol || "",
+						symbol1: token1?.symbol || "",
+					});
+				}
+			},
+		},
+	});
 	const { address } = useAccount();
 	const pathname = usePathname();
 	const router = useRouter();
@@ -113,6 +150,12 @@ const AddPage = () => {
 
 	const { reserve0, reserve1 } = useGetReserves(pairAddress as string);
 
+	const { isSuccess: isConfirmed, isFetching } = useWaitForTransactionReceipt({
+		hash,
+	});
+
+	const { timeDelay, SetLastTxSubmitted } = useTimeDelayToast(isFetching, hash);
+
 	return (
 		<div className="h-full flex items-center flex-col">
 			<div className="space-y-4 w-[25rem] mt-20">
@@ -168,11 +211,11 @@ const AddPage = () => {
 										const tokenSelected = getMarketTokenFromSymbol(value);
 										if (tokenSelected?.addressToken === token1Address) {
 											router.push(
-												`/exchange/add/${tokenSelected?.addressToken}/undefined`,
+												`/trade/add/${tokenSelected?.addressToken}/undefined`,
 											);
 										} else {
 											router.push(
-												`/exchange/add/${tokenSelected?.addressToken}/${token1?.addressToken}`,
+												`/trade/add/${tokenSelected?.addressToken}/${token1?.addressToken}`,
 											);
 										}
 									}}
@@ -232,11 +275,11 @@ const AddPage = () => {
 										const tokenSelected = getMarketTokenFromSymbol(value);
 										if (tokenSelected?.addressToken === token0Address) {
 											router.push(
-												`/exchange/add/undefined/${tokenSelected?.addressToken}`,
+												`/trade/add/undefined/${tokenSelected?.addressToken}`,
 											);
 										} else {
 											router.push(
-												`/exchange/add/${token0?.addressToken}/${tokenSelected?.addressToken}`,
+												`/trade/add/${token0?.addressToken}/${tokenSelected?.addressToken}`,
 											);
 										}
 									}}
@@ -276,7 +319,8 @@ const AddPage = () => {
 								token0Address === "undefined" ||
 								token1Address === "undefined" ||
 								Number(amount0) === 0 ||
-								Number(amount1) === 0
+								Number(amount1) === 0 ||
+								timeDelay
 							}
 							onClick={() => {
 								isApproveNeeded0
@@ -310,13 +354,19 @@ const AddPage = () => {
 										  });
 							}}
 						>
-							{isApproveNeeded0
-								? `Approve ${token0?.symbol}`
-								: isApproveNeeded1
-								  ? `Approve ${token1?.symbol}`
-								  : pairExist
-									  ? "Add liquitity"
-									  : "Create Pair"}
+							{timeDelay ? (
+								<>
+									<Loader2 className="animate-spin mr-2" /> Processing...
+								</>
+							) : isApproveNeeded0 ? (
+								`Approve ${token0?.symbol}`
+							) : isApproveNeeded1 ? (
+								`Approve ${token1?.symbol}`
+							) : pairExist ? (
+								"Add liquitity"
+							) : (
+								"Create Pair"
+							)}
 						</Button>
 					</CardFooter>
 				</Card>

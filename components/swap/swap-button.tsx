@@ -18,7 +18,8 @@ import {
 } from "@/lib/helpers/global.helper";
 import { TokenBalance, TransactionAction } from "@/lib/types/global.type";
 import { routerAddress02 } from "@/lib/constants/constant.global";
-import { toast } from "sonner";
+import { Loader2 } from "lucide-react";
+import { useTimeDelayToast } from "@/lib/hooks/useTimeDelayToast";
 
 type SwapButtonProps = {
 	amountFrom: string;
@@ -35,10 +36,6 @@ const SwapButton = ({
 	tokenSelectedTo,
 	pairExist,
 }: SwapButtonProps) => {
-	const [lastTxSubmitted, SetLastTxSubmitted] = useState<TransactionAction>({
-		action: "approve",
-		symbolFrom: "",
-	});
 	const {
 		data: hash,
 		isPending,
@@ -48,7 +45,6 @@ const SwapButton = ({
 	} = useWriteContract({
 		mutation: {
 			onSuccess(data, variables, context) {
-				console.log(variables);
 				if (variables.args?.length === 2) {
 					const token = getTokenFromAddress(variables.address);
 					SetLastTxSubmitted({
@@ -74,32 +70,10 @@ const SwapButton = ({
 		},
 	});
 
-	const { isSuccess: isConfirmed, isPending: waitingForConfimation } =
-		useWaitForTransactionReceipt({
-			hash,
-		});
-
-	useEffect(() => {
-		if (isConfirmed) {
-			const desc =
-				lastTxSubmitted.action === "approve"
-					? `Approved ${lastTxSubmitted.symbolFrom} `
-					: `Swap ${lastTxSubmitted.symbolFrom} for ${lastTxSubmitted.symbolTo}.`;
-			toast("Transaction successfully submitted!", {
-				className: "success",
-				description: desc,
-				action: {
-					label: "View",
-					onClick: () => {
-						window.open(
-							`https://juicy-low-small-testnet.explorer.testnet.skalenodes.com/tx/${hash}`,
-							"_blank",
-						);
-					},
-				},
-			});
-		}
-	}, [isConfirmed, hash, lastTxSubmitted]);
+	const { isSuccess: isConfirmed, isFetching } = useWaitForTransactionReceipt({
+		hash,
+	});
+	const { timeDelay, SetLastTxSubmitted } = useTimeDelayToast(isFetching, hash);
 
 	const { address } = useAccount();
 
@@ -126,7 +100,8 @@ const SwapButton = ({
 				isPending ||
 				tokenSelectedFrom === undefined ||
 				tokenSelectedTo === undefined ||
-				amountToken0BigInt === BigInt(0)
+				amountToken0BigInt === BigInt(0) ||
+				timeDelay
 			}
 			onClick={() => {
 				!pairExist
@@ -157,13 +132,21 @@ const SwapButton = ({
 						  });
 			}}
 		>
-			{!pairExist &&
-			tokenSelectedFrom !== undefined &&
-			tokenSelectedTo !== undefined
-				? "Create Pair"
-				: isApproveNeeded
-				  ? `Approve ${tokenSelectedFrom.symbol}`
-				  : "Swap"}
+			<div className="transition-all">
+				{timeDelay ? (
+					<div className="flex flex-row">
+						<Loader2 className="animate-spin mr-2" /> Processing...
+					</div>
+				) : !pairExist &&
+				  tokenSelectedFrom !== undefined &&
+				  tokenSelectedTo !== undefined ? (
+					"Create Pair"
+				) : isApproveNeeded ? (
+					`Approve ${tokenSelectedFrom.symbol}`
+				) : (
+					"Swap"
+				)}
+			</div>
 		</Button>
 	);
 };

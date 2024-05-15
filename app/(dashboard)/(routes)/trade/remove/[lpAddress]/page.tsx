@@ -7,7 +7,7 @@ import {
 	CardHeader,
 	CardTitle,
 } from "@/components/ui/card";
-import { MoveLeft, Settings } from "lucide-react";
+import { Loader2, MoveLeft, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
@@ -16,10 +16,15 @@ import { routerAddress02 } from "@/lib/constants/constant.global";
 import {
 	displayDecimalNumber,
 	formatNumber,
+	getTokenFromAddress,
 	stringToBigIntWithDecimals,
 } from "@/lib/helpers/global.helper";
 import { usePathname, useRouter } from "next/navigation";
-import { useAccount, useWriteContract } from "wagmi";
+import {
+	useAccount,
+	useWaitForTransactionReceipt,
+	useWriteContract,
+} from "wagmi";
 import { abiRouter02 } from "@/lib/constants/abis/abiRouter02";
 import { abiERC20Testnet } from "@/lib/constants/abis/abiERC20Testnet";
 import { useApproveNeeded } from "@/lib/hooks/useApproveNeeded";
@@ -27,9 +32,41 @@ import { useGetReserves } from "@/lib/hooks/useGetReserves";
 import { useUserPoolInfos } from "@/lib/hooks/useUserPoolInfos";
 import { useGetERC20Infos } from "@/lib/hooks/useGetERC20Infos";
 import { Separator } from "@/components/ui/separator";
+import { useTimeDelayToast } from "@/lib/hooks/useTimeDelayToast";
 
 const RemovePage = () => {
-	const { data: hash, isPending, writeContract, error } = useWriteContract();
+	const {
+		data: hash,
+		isPending,
+		writeContract,
+		error,
+	} = useWriteContract({
+		mutation: {
+			onSuccess(data, variables, context) {
+				if (variables.args?.length === 2) {
+					const token = getTokenFromAddress(variables.address);
+					SetLastTxSubmitted({
+						action: "approve",
+						symbolFrom: token?.symbol || "LP",
+					});
+				} else {
+					if (!variables.args) return;
+					const [addressToken0, addressToken1] = ([
+						variables.args[0],
+						variables.args[1],
+					] as [string, string]) || ["", ""];
+					const token0 = getTokenFromAddress(addressToken0);
+					const token1 = getTokenFromAddress(addressToken1);
+
+					SetLastTxSubmitted({
+						action: "remove",
+						symbol0: token0?.symbol || "",
+						symbol1: token1?.symbol || "",
+					});
+				}
+			},
+		},
+	});
 	const { address } = useAccount();
 	const pathname = usePathname();
 	const router = useRouter();
@@ -90,6 +127,12 @@ const RemovePage = () => {
 		}
 	}, [poolShare, reserve1, decimals1]);
 
+	const { isSuccess: isConfirmed, isFetching } = useWaitForTransactionReceipt({
+		hash,
+	});
+
+	const { timeDelay, SetLastTxSubmitted } = useTimeDelayToast(isFetching, hash);
+
 	return (
 		<div className="h-full flex items-center flex-col">
 			<div className="space-y-4 w-[25rem] mt-20">
@@ -147,10 +190,10 @@ const RemovePage = () => {
 								<p className="font-semibold mr-2">Expectings :</p>
 								<div>
 									<p>
-										{formatNumber(expectingToken0, 3)} {token0Symbol}
+										{formatNumber(expectingToken0, 3)} &nbsp;{token0Symbol}
 									</p>
 									<p>
-										{formatNumber(expectingToken1, 3)}
+										{formatNumber(expectingToken1, 3)}&nbsp;
 										{token1Symbol}
 									</p>
 								</div>
@@ -165,7 +208,8 @@ const RemovePage = () => {
 							disabled={
 								isPending ||
 								lpAddress === "undefined" ||
-								Number(amountTokenBigInt) === 0
+								Number(amountTokenBigInt) === 0 ||
+								timeDelay
 							}
 							onClick={() => {
 								isApproveNeeded
@@ -191,9 +235,15 @@ const RemovePage = () => {
 									  });
 							}}
 						>
-							{isApproveNeeded
-								? `Approve LP ${token0Symbol}/${token1Symbol}`
-								: "Remove liquidity"}
+							{timeDelay ? (
+								<>
+									<Loader2 className="animate-spin mr-2" /> Processing...
+								</>
+							) : isApproveNeeded ? (
+								`Approve LP ${token0Symbol}/${token1Symbol}`
+							) : (
+								"Remove liquidity"
+							)}
 						</Button>
 					</CardFooter>
 				</Card>
